@@ -1,14 +1,18 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from './assets/vite.svg'
-import heroImg from './assets/hero.png'
+import { useEffect } from 'react'
 import './App.css'
 import Header from './components/Header'
 import { Outlet } from 'react-router-dom'
 import ScrollToTop from './components/ScrollToTop'
+import { useSelector } from 'react-redux'
+import useFetchUserInfo from './costumHooks/useFetchUserInfo'
 
 function App() {
-  const [count, setCount] = useState(0)
+  const user = useSelector((state) => state.user.user);
+  const { refetch } = useFetchUserInfo();
+
+  useEffect(() => {
+    refetch(); // 🔥 ALWAYS run on load
+  }, []);
 
   return (
     <>
