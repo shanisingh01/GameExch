@@ -7,6 +7,7 @@ import { ToastContainer } from "react-toastify";
 import { Provider, useSelector } from "react-redux";
 import store from "./redux/store.js";
 import { Navigate } from "react-router-dom";
+import Loader from "./components/Loader.jsx";
 
 import {
   createBrowserRouter,
@@ -14,6 +15,8 @@ import {
   Route,
   RouterProvider,
 } from "react-router-dom";
+import MatchBetsPage from "./pages/MatchBetsPage.jsx";
+
 
 // import ProtectedRoute from "./components/ProtectedRoute.jsx";
 
@@ -22,7 +25,7 @@ const ProtectedRoute = ({ children }) => {
 
   //  WAIT until auth check completes
   if (!isAuthChecked) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   //  AFTER check → decide
@@ -33,7 +36,7 @@ const ProtectedRoute = ({ children }) => {
   return children;
 };
 
-// ✅ Lazy Imports
+//  Lazy Imports
 const App = lazy(() => import("./App.jsx"));
 const Login = lazy(() => import("./pages/Login.jsx"));
 const Home = lazy(() => import("./pages/Home.jsx"));
@@ -49,11 +52,11 @@ const Exposure = lazy(() => import("./pages/Exposure.jsx"));
 export const BASE_URL = "https://gameexchlive.anshuwap.com";
 
 // ✅ Loader
-const Loader = () => (
-  <div className="flex justify-center items-center h-screen text-lg font-semibold">
-    Loading...
-  </div>
-);
+// const Loader = () => (
+//   <div className="flex justify-center items-center h-screen text-lg font-semibold">
+//     Loading...
+//   </div>
+// );
 
 const router = createBrowserRouter(
   createRoutesFromElements(
@@ -78,9 +81,9 @@ const router = createBrowserRouter(
         <Route
           path=""
           element={
-            <Suspense fallback={<Loader />}>
+            <ProtectedRoute><Suspense fallback={<Loader />}>
               <Home />
-            </Suspense>
+            </Suspense></ProtectedRoute>
           }
         />
         <Route
@@ -97,17 +100,23 @@ const router = createBrowserRouter(
         <Route
           path="inplay"
           element={
-            <Suspense fallback={<Loader />}>
-              <Inplay />
-            </Suspense>
+            <ProtectedRoute>
+              {" "}
+              <Suspense fallback={<Loader />}>
+                <Inplay />
+              </Suspense>
+            </ProtectedRoute>
           }
         />
         <Route
           path="profile"
           element={
-            <Suspense fallback={<Loader />}>
-              <ProfilePage />
-            </Suspense>
+            <ProtectedRoute>
+              {" "}
+              <Suspense fallback={<Loader />}>
+                <ProfilePage />
+              </Suspense>
+            </ProtectedRoute>
           }
         />
         <Route
@@ -121,9 +130,12 @@ const router = createBrowserRouter(
         <Route
           path="change_password"
           element={
-            <Suspense fallback={<Loader />}>
-              <ChangePassword />
-            </Suspense>
+            <ProtectedRoute>
+              {" "}
+              <Suspense fallback={<Loader />}>
+                <ChangePassword />
+              </Suspense>
+            </ProtectedRoute>
           }
         />
         <Route
@@ -156,6 +168,18 @@ const router = createBrowserRouter(
             </Suspense>
           }
         />
+        <Route
+        path="bet_details/:id"
+          element={
+            <ProtectedRoute>
+              {" "}
+              <Suspense fallback={<Loader />}>
+                <MatchBetsPage />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+
       </Route>
     </>,
   ),

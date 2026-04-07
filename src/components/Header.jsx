@@ -18,9 +18,13 @@ import {
 } from "react-icons/fa";
 import { FaArrowRight, FaRightFromBracket } from "react-icons/fa6";
 import { Link, NavLink } from "react-router-dom";
+import { useSelector, useDispatch } from "react-redux";
+import { logout } from "../redux/userSlice";
 
 function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
+  const userInfo = useSelector((state) => state.user.userInfo);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -30,16 +34,24 @@ function Header() {
     { name: "CASINO", icon: <FaGamepad />, path: "/" },
     { name: "FREE GAMES", icon: <FaTrophy />, path: "/" },
     { name: "LEDGER", icon: <FaWallet />, path: "/client/ledger" },
-    { name: "ACCOUNT STATEMENT", icon: <FaBook />, path: "/client/statement_details" },
+    {
+      name: "ACCOUNT STATEMENT",
+      icon: <FaBook />,
+      path: "/client/statement_details",
+    },
     { name: "EXPOSURE", icon: <FaChartBar />, path: "/client/exposure" },
     { name: "PROFILE", icon: <FaUser />, path: "/client/profile" },
     { name: "RULES", icon: <FaInfoCircle />, path: "/client/rules" },
     { name: "PASSWORD", icon: <FaKey />, path: "/client/change_password" },
-    { name: "LOGOUT", icon: <FaSignOutAlt />, path: "/" },
+    {
+      name: "LOGOUT",
+      icon: <FaSignOutAlt />,
+      path: "/",
+    },
   ];
 
   const location = useLocation();
-  console.log(location.pathname);
+  // console.log(location.pathname);
   return (
     <div className="w-full z-50 sticky top-0 font-sans">
       {/* ================= TOP HEADER ================= */}
@@ -54,7 +66,7 @@ function Header() {
           onClick={() => navigate("/client/profile")}
           className="text-[14px] cursor-pointer font-medium tracking-wide"
         >
-          demo c2
+          {userInfo?.name || "User Name"}
         </div>
 
         {/* DESKTOP MENU */}
@@ -123,7 +135,10 @@ function Header() {
           </NavLink>
 
           {/* LOGOUT */}
-          <div className="flex items-center gap-1 px-4 cursor-pointer hover:text-red-400">
+          <div
+            onClick={() => dispatch(logout())}
+            className="flex items-center gap-1 px-4 cursor-pointer hover:text-red-400"
+          >
             <FaSignOutAlt className="text-[20px]" />
             LOGOUT
           </div>
@@ -175,10 +190,20 @@ function Header() {
                   isActive ? "bg-[#1e3a5f]" : ""
                 }`}
               >
-                <div className="flex font-bold items-center gap-3">
-                  <span>{item.icon}</span>
-                  <span>{item.name}</span>
-                </div>
+                {item.name === "LOGOUT" ? (
+                  <div
+                    onClick={() => dispatch(logout())}
+                    className="flex font-bold items-center gap-3"
+                  >
+                    <span>{item.icon}</span>
+                    <span>{item.name}</span>
+                  </div>
+                ) : (
+                  <div className="flex font-bold items-center gap-3">
+                    <span>{item.icon}</span>
+                    <span>{item.name}</span>
+                  </div>
+                )}
 
                 <FaArrowRight className="text-[18px]" />
               </NavLink>
@@ -196,9 +221,19 @@ function Header() {
 
       {/* ================= YELLOW STRIP ================= */}
       <div className="h-[30px] bg-[#ffcc00] flex items-center justify-center text-[13px] md:text-[14px] font-semibold">
-        <span>Chips: 709</span>
+        <span>
+          Chips:{" "}
+          <span className="font-bold">
+            {Number(userInfo?.main_wallet) +
+              Number(userInfo?.curr_wallet) -
+              Number(userInfo?.used_wallet)}
+          </span>
+        </span>
         <span className="ml-3 text-blue-700">
-          Expo : <span className="text-red-600">0</span>
+          Expo :{" "}
+          <span className="text-red-600 font-bold">
+            {Number(userInfo?.used_wallet)}
+          </span>
         </span>
       </div>
     </div>

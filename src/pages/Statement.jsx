@@ -5,6 +5,7 @@ import { BASE_URL } from "../main";
 import { useSelector } from "react-redux";
 import DateRangePicker from "../components/DateRangePicker";
 import dayjs from "dayjs";
+import DtataLoader from "../components/DtataLoader";
 
 const data = [
   {
@@ -56,24 +57,26 @@ const Statement = () => {
   const [endDate, setEndDate] = useState(null);
   const [show, setShow] = useState(false);
   const [statementData, setStatementData] = useState([]);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-  const today = dayjs();
-  const oneMonthAgo = dayjs().subtract(1, "month");
+    const today = dayjs();
+    const oneMonthAgo = dayjs().subtract(1, "month");
 
-  setStartDate(oneMonthAgo);
-  setEndDate(today);
-}, []);
+    setStartDate(oneMonthAgo);
+    setEndDate(today);
+  }, []);
   // 🔥 Filter Logic
-const filteredData =
-  activeTab === "all"
-    ? statementData
-    : statementData.filter(
-        (item) => item.filter?.toLowerCase() === activeTab.toLowerCase(),
-      );
+  const filteredData =
+    activeTab === "all"
+      ? statementData
+      : statementData.filter(
+          (item) => item.filter?.toLowerCase() === activeTab.toLowerCase(),
+        );
 
   const fetchData = async () => {
     try {
+      setLoading(true);
       const res = await axios.post(
         `${BASE_URL}/api-v1/Client/statement_details`,
         {
@@ -83,16 +86,18 @@ const filteredData =
           end_date: endDate?.format("YYYY-MM-DD"),
         },
       );
+      setLoading(false);
       setStatementData(res.data.data.statement);
     } catch (error) {
       console.log(error);
+      setLoading(false);
     }
   };
-useEffect(() => {
-  if (startDate && endDate) {
-    fetchData();
-  }
-}, [startDate, endDate]);
+  useEffect(() => {
+    if (startDate && endDate) {
+      fetchData();
+    }
+  }, [startDate, endDate]);
   return (
     <div className="bg-[#e9e9e9] min-h-screen">
       <div className="max-w-[100%] md:max-w-[80%] mx-auto px-1 md:px-4">
@@ -165,45 +170,50 @@ useEffect(() => {
             </thead>
 
             {/* Body */}
-<tbody>
-  {filteredData.length > 0 ? (
-    filteredData.map((row, i) => (
-      <tr key={i} className="border-t border-gray-300 bg-[#e9e9e9]">
-        
-        {/* DATE */}
-        <td className="px-2 py-2 text-nowrap border-r border-gray-300">
-          {dayjs(row.added_at).format("DD MMM YY")}
-        </td>
+            <tbody>
+              {loading ? (
+                <tr>
+                  <td colSpan="5" className="text-center py-6 text-gray-600">
+                    <DtataLoader />
+                  </td>
+                </tr>
+              ) : filteredData.length > 0 ? (
+                filteredData.map((row, i) => (
+                  <tr key={i} className="border-t border-gray-300 bg-[#e9e9e9]">
+                    {/* DATE */}
+                    <td className="px-2 py-2 text-nowrap border-r border-gray-300">
+                      {dayjs(row.added_at).format("DD MMM YY")}
+                    </td>
 
-        {/* DESCRIPTION */}
-        <td className="px-2 md:px-[14px] py-2 md:py-[12px] whitespace-nowrap border-r border-gray-300">
-          {row.description}
-        </td>
+                    {/* DESCRIPTION */}
+                    <td className="px-2 md:px-[14px] py-2 md:py-[12px] whitespace-nowrap border-r border-gray-300">
+                      {row.description}
+                    </td>
 
-        {/* CREDIT */}
-        <td className="px-2 md:px-[10px] py-2 md:py-[12px] text-center text-blue-600 border-r border-gray-300">
-          {row.credit}
-        </td>
+                    {/* CREDIT */}
+                    <td className="px-2 md:px-[10px] py-2 md:py-[12px] text-center text-blue-600 border-r border-gray-300">
+                      {row.credit}
+                    </td>
 
-        {/* DEBIT */}
-        <td className="px-2 md:px-[10px] py-2 md:py-[12px] text-center text-red-600 border-r border-gray-300">
-          {row.debit}
-        </td>
+                    {/* DEBIT */}
+                    <td className="px-2 md:px-[10px] py-2 md:py-[12px] text-center text-red-600 border-r border-gray-300">
+                      {row.debit}
+                    </td>
 
-        {/* BALANCE */}
-        <td className="px-2 md:px-[10px] py-2 md:py-[12px] text-center">
-          {row.total}
-        </td>
-      </tr>
-    ))
-  ) : (
-    <tr>
-      <td colSpan="5" className="text-center py-6 text-gray-600">
-        No Data Found
-      </td>
-    </tr>
-  )}
-</tbody>
+                    {/* BALANCE */}
+                    <td className="px-2 md:px-[10px] py-2 md:py-[12px] text-center">
+                      {row.total}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="text-center py-6 text-gray-600">
+                    No Data Found
+                  </td>
+                </tr>
+              )}
+            </tbody>
           </table>
         </div>
         {/* Footer Button */}

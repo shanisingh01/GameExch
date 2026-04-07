@@ -1,4 +1,5 @@
 import { createSlice } from "@reduxjs/toolkit";
+import useFetchUserInfo from "../costumHooks/useFetchUserInfo";
 
 // Load
 const loadFromLocalStorage = () => {
@@ -51,6 +52,8 @@ const userSlice = createSlice({
       state.user = "";
       state.userInfo = null;
       state.isAuthChecked = true;
+      localStorage.removeItem("userDetails");
+
     },
   },
 });

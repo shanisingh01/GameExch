@@ -86,7 +86,7 @@ const BetPopup = ({ isOpen, onClose ,action}) => {
           
           {/* Title */}
           <div className="flex justify-between items-center mb-[10px]">
-            <h2 className="text-[20px] text-[#333]">
+            <h2 className="md:text-[20px] text-[14px] text-start text-[#333]">
               ODDS : LUCKNOW SUPER GIANTS Rate: [0.90]
               <span className="text-[#1e73be] ml-1">({action})</span>
             </h2>
@@ -105,12 +105,12 @@ const BetPopup = ({ isOpen, onClose ,action}) => {
               <input
                 value={amount}
                 onChange={handleChange}
-                className="flex-1 h-[36px] px-3 bg-[#e6e6e6] border border-gray-300 rounded-[4px] outline-none text-[14px]"
+                className="flex-1 md:h-[36px] h-[32px] px-3 bg-[#e6e6e6] border border-gray-300 rounded-[4px] outline-none text-[14px]"
               />
 
               <button
                 onClick={handleClear}
-                className="bg-[#d32f2f] cursor-pointer text-white px-[14px] h-[36px] rounded-[4px] text-[14px] font-semibold"
+                className="bg-[#d32f2f] cursor-pointer text-white px-[14px] md:h-[36px] h-[32px] rounded-[4px] md:text-[14px] text-[12px] font-semibold"
               >
                 CLEAR
               </button>
@@ -127,7 +127,7 @@ const BetPopup = ({ isOpen, onClose ,action}) => {
                 <button
                   key={amt}
                   onClick={() => handleSelect(amt)}
-                  className={`h-[33px] rounded-[6px] cursor-pointer text-[15px] font-semibold transition
+                  className={`md:h-[33px] h-[28px] rounded-[6px] cursor-pointer md:text-[15px] text-[13px] font-semibold transition
                     ${
                       selected === amt
                         ? "bg-[#1e88c7] text-white"
@@ -143,14 +143,14 @@ const BetPopup = ({ isOpen, onClose ,action}) => {
             <div className="flex justify-between gap-4">
               <button
                 onClick={onClose}
-                className="flex-1 h-[35px] cursor-pointer bg-[#e3342f] text-white rounded-[6px] text-[16px] font-semibold"
+                className="flex-1 md:h-[35px] h-[30px] cursor-pointer bg-[#e3342f] text-white rounded-[6px] md:text-[16px] text-[14px] font-semibold"
               >
                 CLOSE
               </button>
 
               <button
                 onClick={handleSubmit}
-                className="flex-1 h-[35px] cursor-pointer bg-[#1e88c7] text-white rounded-[6px] text-[16px] font-semibold"
+                className="flex-1 md:h-[35px] h-[30px]  cursor-pointer bg-[#1e88c7] text-white rounded-[6px] md:text-[16px] text-[14px] font-semibold"
               >
                 DONE
               </button>
@@ -160,7 +160,7 @@ const BetPopup = ({ isOpen, onClose ,action}) => {
 
         {/* Bottom Close */}
         <div className="flex justify-end px-4 pb-4">
-          <button onClick={onClose} className="bg-black cursor-pointer text-white px-[18px] py-[6px] text-[14px]">
+          <button onClick={onClose} className="bg-black cursor-pointer text-white px-[18px] md:py-[6px] py-[5px] text-[14px]">
             Close
           </button>
         </div>

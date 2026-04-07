@@ -3,6 +3,8 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { Link } from "react-router-dom";
 import { BASE_URL } from "../main";
+import Loader from "../components/Loader";
+import DtataLoader from "../components/DtataLoader";
 
 const Ledger = () => {
   const user = useSelector((state) => state.user.user);
@@ -17,62 +19,43 @@ const Ledger = () => {
 
       if (!user) return;
 
-      const res = await axios.post(
-        `${BASE_URL}/api-v1/Client/ledger`,
-        {
-          client_id: user.client_id,
-          auth_key: user.auth_key,
-        }
-      );
+      const res = await axios.post(`${BASE_URL}/api-v1/Client/ledger`, {
+        client_id: user.client_id,
+        auth_key: user.auth_key,
+      });
 
-      setLedgerData(res?.data?.data || []); // ✅ safe fallback
+      setLedgerData(res?.data?.data || []); //  safe fallback
     } catch (error) {
       console.log(error);
-      setLedgerData([]); // ✅ prevent crash
+      setLedgerData([]); //  prevent crash
     } finally {
       setLoading(false);
     }
   };
 
-  // 🔥 Call API when user available
+  //  Call API when user available
   useEffect(() => {
     if (user) {
       fetchData();
     }
   }, [user]);
 
-  // ✅ SAFE DATA
+  // SAFE DATA
   const safeData = Array.isArray(ledgerData) ? ledgerData : [];
 
-  // ✅ Summary Calculation
-  const lena = safeData.reduce(
-    (acc, cur) => acc + Number(cur?.won || 0),
-    0
-  );
+  // Summary Calculation
+  const lena = safeData.reduce((acc, cur) => acc + Number(cur?.won || 0), 0);
 
-  const dena = safeData.reduce(
-    (acc, cur) => acc + Number(cur?.lost || 0),
-    0
-  );
+  const dena = safeData.reduce((acc, cur) => acc + Number(cur?.lost || 0), 0);
 
   const balance = safeData.reduce(
     (acc, cur) => acc + Number(cur?.balance || 0),
-    0
+    0,
   );
-
-  // ⏳ Loading UI
-  if (loading) {
-    return (
-      <div className="h-screen flex justify-center items-center">
-        Loading...
-      </div>
-    );
-  }
 
   return (
     <div className="bg-[#f0f0f0] text-xs min-h-screen py-6">
       <div className="max-w-[100%] md:max-w-[80%] mx-auto">
-
         {/* Header */}
         <div className="main-color text-white text-center py-2 font-bold">
           MY LEDGER
@@ -97,7 +80,6 @@ const Ledger = () => {
         {/* Table */}
         <div className="mt-6 overflow-auto">
           <table className="w-full statement-table border-collapse">
-            
             {/* Header */}
             <thead>
               <tr className="text-white">
@@ -106,14 +88,20 @@ const Ledger = () => {
                     <th key={i} className="main-color px-8 py-3 text-center">
                       {item}
                     </th>
-                  )
+                  ),
                 )}
               </tr>
             </thead>
 
             {/* Body */}
             <tbody>
-              {safeData.length > 0 ? (
+              {loading ? (
+                <tr>
+                  <td colSpan={5} className="py-10 text-center">
+                    <DtataLoader />
+                  </td>
+                </tr>
+              ) : safeData.length > 0 ? (
                 safeData.map((row, i) => {
                   const won = Number(row?.won || 0);
                   const lost = Number(row?.lost || 0);
@@ -125,8 +113,11 @@ const Ledger = () => {
                       className="bg-[#dcdcdc] border-t border-gray-300 font-medium"
                     >
                       {/* Description */}
-                      <td className="px-3 text-nowrap cursor-pointer hover:text-[#146cc4] py-4 border-r border-gray-300 text-blue-600">
-                        {row?.title || "-"} ({row?.added_at || "-"})
+                      <td  className="px-3 text-nowrap cursor-pointer hover:text-[#146cc4] py-4 border-r border-gray-300 text-blue-600">
+                      {/* <Link to={`/client/bet_details/${row?.match_id || ""}`}>
+                         {row?.title || "-"} ({row?.added_at || "-"})
+                      </Link> */}
+                          {row?.title || "-"} ({row?.added_at || "-"})
                       </td>
 
                       {/* Won By */}
@@ -178,7 +169,6 @@ const Ledger = () => {
             </button>
           </Link>
         </div>
-
       </div>
     </div>
   );
